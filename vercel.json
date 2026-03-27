@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/login",    "dest": "/api/login.py" },
+    { "src": "/api/checkout", "dest": "/api/checkout.py" },
+    { "src": "/api/cart/add", "dest": "/api/cart_add.py" },
+    { "src": "/(.*)",         "dest": "/$1" }
+  ]
+}

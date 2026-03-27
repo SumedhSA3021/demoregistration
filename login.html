@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In - Amazin</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #fff; color: #111; }
+
+  .nav-logo { background: #131921; padding: 12px; text-align: center; }
+  .nav-logo a { font-size: 28px; font-weight: 700; color: #ff9900; text-decoration: none; }
+  .nav-logo a span { color: #fff; font-size: 13px; vertical-align: super; }
+
+  .demo-notice { background: #fff3cd; border: 2px solid #ff9900; padding: 10px 20px; text-align: center; font-size: 13px; }
+  .demo-notice strong { color: #B12704; }
+
+  .login-wrap { max-width: 350px; margin: 30px auto; padding: 0 16px 40px; }
+  .login-box { border: 1px solid #ddd; border-radius: 6px; padding: 24px; }
+  .login-box h1 { font-size: 26px; font-weight: 400; margin-bottom: 20px; }
+
+  label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  input[type=text], input[type=password], input[type=email] {
+    width: 100%; padding: 8px 10px; border: 1px solid #888; border-radius: 4px;
+    font-size: 14px; margin-bottom: 14px; outline: none;
+  }
+  input:focus { border-color: #e77600; box-shadow: 0 0 0 3px rgba(228,121,17,0.5); }
+
+  .login-btn {
+    width: 100%; background: #ffd814; border: 1px solid #fcd200;
+    border-radius: 20px; padding: 10px; font-size: 14px;
+    cursor: pointer; font-weight: 500; margin-bottom: 16px;
+  }
+  .login-btn:hover { background: #f7ca00; }
+
+  .divider { border-top: 1px solid #e7e7e7; margin: 16px 0; position: relative; text-align: center; }
+  .divider span { background: #fff; padding: 0 8px; color: #767676; font-size: 12px; position: relative; top: -9px; }
+
+  .new-account { border: 1px solid #ddd; border-radius: 4px; padding: 10px; text-align: center; font-size: 13px; cursor: pointer; text-decoration: none; color: #111; display: block; }
+  .new-account:hover { background: #f7f7f7; }
+
+  .terms { font-size: 11px; color: #767676; text-align: center; margin-top: 16px; }
+  .terms a { color: #0066c0; }
+
+  /* WIRESHARK INFO PANEL */
+  .ws-panel { background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 20px; margin-top: 20px; font-family: 'Courier New', monospace; font-size: 12px; }
+  .ws-panel h3 { color: #89b4fa; margin-bottom: 12px; font-family: Arial, sans-serif; font-size: 14px; }
+  .ws-panel .label { color: #a6e3a1; }
+  .ws-panel .value { color: #fab387; }
+  .ws-panel .comment { color: #6c7086; }
+  .ws-row { margin-bottom: 6px; }
+  .ws-panel .warning { color: #f38ba8; font-weight: 700; font-family: Arial; margin-bottom: 10px; }
+
+  .http-box { background: #181825; border-left: 3px solid #f38ba8; padding: 10px; border-radius: 4px; margin-top: 10px; }
+
+  footer { background: #131921; color: #ccc; padding: 20px; text-align: center; font-size: 12px; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="nav-logo"><a href="index.html">amazin<span>.in</span></a></div>
+<div class="demo-notice">🔬 <strong>Wireshark Demo:</strong> This login POSTs credentials — capture with Burp Suite or browser DevTools Network tab
+
+<div class="login-wrap">
+  <div class="login-box">
+    <h1>Sign in</h1>
+
+    <form id="loginForm" action="/api/login" method="POST">
+      <label for="email">Email or mobile phone number</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" value="testuser@amazin.in">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" value="MySecret@123">
+
+      <button type="submit" class="login-btn">Continue</button>
+    </form>
+
+    <p class="terms">By continuing, you agree to Amazin's <a href="#">Conditions of Use</a> and <a href="#">Privacy Notice</a>.</p>
+
+    <div class="divider"><span>New to Amazin?</span></div>
+    <a href="#" class="new-account">Create your Amazin account</a>
+  </div>
+
+  <!-- WIRESHARK HINT PANEL -->
+  <div class="ws-panel">
+    <h3>🦈 Wireshark — What you'll capture</h3>
+    <p class="warning">⚠ Credentials sent in PLAINTEXT over HTTP!</p>
+
+    <div class="http-box">
+      <div class="ws-row"><span class="label">POST</span> <span class="value">/api/login HTTP/1.1</span></div>
+      <div class="ws-row"><span class="label">Host:</span> <span class="value">your-app.vercel.app</span></div>
+      <div class="ws-row"><span class="label">Content-Type:</span> <span class="value">application/x-www-form-urlencoded</span></div>
+      <div class="ws-row"><span class="label">Cookie:</span> <span class="value">session_id=demo_sess_x9f3j...</span></div>
+      <div class="ws-row" style="margin-top:8px">
+        <span class="label">Body: </span>
+        <span class="value">email=testuser%40amazin.in&amp;password=MySecret%40123</span>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="ws-row"><span class="comment">// Wireshark filter to use:</span></div>
+      <div class="ws-row"><span class="value">http.request.method == "POST"</span></div>
+      <div class="ws-row"><span class="comment">// Then: Follow → HTTP Stream</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2024 Amazin.in — Educational demo only. Not affiliated with Amazon.</footer>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+
+    // Send actual POST so Wireshark can capture it
+    fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}&csrf_token=abc123demo`
+    }).catch(() => {});
+
+    // Set session cookies
+    document.cookie = 'session_id=auth_sess_' + Math.random().toString(36).substr(2,12) + '; path=/';
+    document.cookie = 'auth_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.demo; path=/';
+    document.cookie = 'user_email=' + email + '; path=/';
+
+    alert(`🔐 Login submitted!\n\nCredentials sent:\nEmail: ${email}\nPassword: ${pass}\n\n🦈 Check Wireshark → Follow HTTP Stream to see these in PLAINTEXT!\n\nSession cookie also set — check the Cookie header.`);
+    window.location.href = 'index.html';
+  });
+</script>
+</body>
+</html>

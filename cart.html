@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Cart - Amazin</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #eaeded; color: #111; }
+
+  .nav { background: #131921; color: #fff; }
+  .nav-top { display: flex; align-items: center; padding: 8px 16px; gap: 12px; }
+  .logo { font-size: 26px; font-weight: 700; color: #ff9900; text-decoration: none; }
+  .logo span { color: #fff; font-size: 13px; vertical-align: super; }
+  .nav-right a { color: #fff; text-decoration: none; font-size: 13px; }
+
+  .demo-notice { background: #fff3cd; border: 2px solid #ff9900; padding: 10px 20px; text-align: center; font-size: 13px; }
+  .demo-notice strong { color: #B12704; }
+
+  .page { max-width: 1100px; margin: 20px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 300px; gap: 16px; align-items: start; }
+
+  /* CART */
+  .cart-box { background: #fff; border-radius: 6px; padding: 24px; }
+  .cart-box h1 { font-size: 24px; font-weight: 400; border-bottom: 1px solid #ddd; padding-bottom: 16px; margin-bottom: 16px; }
+  .cart-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #eee; align-items: flex-start; }
+  .cart-emoji { font-size: 52px; background: #f9f9f9; padding: 10px; border-radius: 6px; min-width: 80px; text-align: center; }
+  .cart-details { flex: 1; }
+  .cart-details h3 { font-size: 15px; margin-bottom: 4px; color: #0066c0; cursor: pointer; }
+  .cart-details h3:hover { text-decoration: underline; }
+  .in-stock { color: #007600; font-size: 13px; }
+  .cart-price { font-size: 20px; font-weight: 700; color: #B12704; }
+  .cart-actions { display: flex; gap: 8px; margin-top: 10px; font-size: 13px; }
+  .qty-sel { padding: 4px 8px; border: 1px solid #888; border-radius: 4px; }
+  .remove-btn { color: #0066c0; background: none; border: none; cursor: pointer; font-size: 13px; }
+  .remove-btn:hover { text-decoration: underline; color: #c45500; }
+  .subtotal { text-align: right; font-size: 18px; margin-top: 16px; }
+  .subtotal strong { font-size: 20px; color: #B12704; }
+
+  /* ORDER SUMMARY */
+  .order-box { background: #fff; border-radius: 6px; padding: 20px; }
+  .order-box h2 { font-size: 18px; margin-bottom: 16px; }
+  .order-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+  .order-divider { border-top: 1px solid #ddd; margin: 12px 0; }
+  .order-total { display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; margin-bottom: 16px; }
+  .checkout-btn { width: 100%; background: #ffd814; border: 1px solid #fcd200; border-radius: 20px; padding: 12px; font-size: 15px; cursor: pointer; font-weight: 500; margin-bottom: 8px; }
+  .checkout-btn:hover { background: #f7ca00; }
+
+  /* WIRESHARK PANEL */
+  .ws-full { background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 20px; margin-top: 20px; font-family: 'Courier New', monospace; font-size: 12px; grid-column: 1 / -1; }
+  .ws-full h3 { color: #89b4fa; font-family: Arial; font-size: 15px; margin-bottom: 14px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { background: #313244; color: #cdd6f4; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-family: monospace; }
+  .tab.active { background: #89b4fa; color: #1e1e2e; font-weight: 700; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .code-block { background: #181825; border-radius: 4px; padding: 14px; line-height: 1.8; }
+  .h-key { color: #89dceb; }
+  .h-val { color: #a6e3a1; }
+  .h-method { color: #f38ba8; font-weight: 700; }
+  .h-path { color: #fab387; }
+  .h-body { color: #f9e2af; }
+  .h-comment { color: #6c7086; }
+  .filter-box { background: #313244; border-radius: 4px; padding: 12px; margin-top: 12px; }
+  .filter-title { color: #a6e3a1; font-family: Arial; font-size: 12px; margin-bottom: 6px; }
+  .filter-val { color: #cba6f7; }
+
+  footer { background: #131921; color: #ccc; padding: 20px; text-align: center; font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-top">
+    <a class="logo" href="index.html">amazin<span>.in</span></a>
+    <div style="flex:1"></div>
+    <div class="nav-right"><a href="login.html">Hello, Demo User | Account & Lists</a></div>
+  </div>
+</nav>
+<div class="demo-notice">🔬 <strong>Wireshark Demo:</strong> Checkout POST — inspect with DevTools → Network tab or Burp Suite</div>
+
+<div class="page">
+  <!-- CART -->
+  <div class="cart-box">
+    <h1>Shopping Cart</h1>
+
+    <div class="cart-item">
+      <div class="cart-emoji">⌚</div>
+      <div class="cart-details">
+        <h3>Noise ColorFit Pro 4 Alpha Smart Watch</h3>
+        <div class="in-stock">In Stock</div>
+        <div class="prime">✓ Eligible for FREE Delivery</div>
+        <div class="cart-price">₹2,499</div>
+        <div class="cart-actions">
+          <select class="qty-sel"><option>1</option><option>2</option><option>3</option></select>
+          <button class="remove-btn" onclick="removeItem(this)">Delete</button>
+          <button class="remove-btn">Save for later</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="cart-emoji">🎧</div>
+      <div class="cart-details">
+        <h3>boAt Airdopes 141 Bluetooth TWS Earbuds</h3>
+        <div class="in-stock">In Stock</div>
+        <div class="prime">✓ Eligible for FREE Delivery</div>
+        <div class="cart-price">₹1,299</div>
+        <div class="cart-actions">
+          <select class="qty-sel"><option>1</option><option>2</option><option>3</option></select>
+          <button class="remove-btn" onclick="removeItem(this)">Delete</button>
+          <button class="remove-btn">Save for later</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="subtotal">Subtotal (2 items): <strong>₹3,798</strong></div>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div class="order-box">
+    <h2>Order Summary</h2>
+    <div class="order-row"><span>Items (2):</span><span>₹3,798</span></div>
+    <div class="order-row"><span>Delivery:</span><span style="color:#007600">FREE</span></div>
+    <div class="order-row"><span>Amazon Prime:</span><span>— Included</span></div>
+    <div class="order-divider"></div>
+    <div class="order-total"><span>Order Total:</span><span>₹3,798</span></div>
+    <button class="checkout-btn" onclick="placeOrder()">Proceed to Buy</button>
+    <p style="font-size:11px;color:#888;text-align:center">🔒 Secure checkout (demo: HTTP)</p>
+  </div>
+
+  <!-- WIRESHARK PANEL -->
+  <div class="ws-full">
+    <h3>🦈 Wireshark — Traffic Analysis for This Page</h3>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('get')">GET Request</button>
+      <button class="tab" onclick="showTab('post')">POST Checkout</button>
+      <button class="tab" onclick="showTab('cookies')">Cookies</button>
+      <button class="tab" onclick="showTab('filters')">Wireshark Filters</button>
+    </div>
+
+    <!-- GET TAB -->
+    <div class="tab-content active" id="tab-get">
+      <div class="code-block">
+        <div><span class="h-method">GET</span> <span class="h-path">/cart?session=demo_sess_x9f3j&user_id=42 HTTP/1.1</span></div>
+        <div><span class="h-key">Host:</span> <span class="h-val">your-app.vercel.app</span></div>
+        <div><span class="h-key">Accept:</span> <span class="h-val">text/html,application/xhtml+xml</span></div>
+        <div><span class="h-key">Accept-Language:</span> <span class="h-val">en-IN,en;q=0.9</span></div>
+        <div><span class="h-key">Cookie:</span> <span class="h-val">session_id=demo_sess_x9f3j; user_pref=lang=en-IN; cart_count=2</span></div>
+        <div><span class="h-key">Referer:</span> <span class="h-val">http://your-app.vercel.app/index.html</span></div>
+        <br>
+        <div class="h-comment">// Note: session_id, cart data visible in URL + Cookie header</div>
+        <div class="h-comment">// No request body — this is a GET request</div>
+      </div>
+    </div>
+
+    <!-- POST TAB -->
+    <div class="tab-content" id="tab-post">
+      <div class="code-block">
+        <div><span class="h-method">POST</span> <span class="h-path">/api/checkout HTTP/1.1</span></div>
+        <div><span class="h-key">Host:</span> <span class="h-val">your-app.vercel.app</span></div>
+        <div><span class="h-key">Content-Type:</span> <span class="h-val">application/x-www-form-urlencoded</span></div>
+        <div><span class="h-key">Content-Length:</span> <span class="h-val">198</span></div>
+        <div><span class="h-key">Cookie:</span> <span class="h-val">session_id=auth_sess_k8j2; auth_token=eyJhbGciOiJIUzI1NiJ9.demo</span></div>
+        <br>
+        <div class="h-comment">// ---- Request Body (visible in plaintext) ----</div>
+        <div><span class="h-body">user_id=42&name=Demo+User&email=testuser%40amazin.in</span></div>
+        <div><span class="h-body">&address=12+MG+Road%2C+Bengaluru+560001</span></div>
+        <div><span class="h-body">&card_last4=4242&items=Smartwatch%2CEarbuds</span></div>
+        <div><span class="h-body">&total=3798&csrf_token=abc123demo</span></div>
+        <br>
+        <div class="h-comment">// ⚠ Name, email, address visible in PLAINTEXT over HTTP!</div>
+      </div>
+    </div>
+
+    <!-- COOKIES TAB -->
+    <div class="tab-content" id="tab-cookies">
+      <div class="code-block">
+        <div class="h-comment">// Cookies sent with EVERY request to this domain:</div>
+        <br>
+        <div><span class="h-key">session_id</span> = <span class="h-val">auth_sess_k8j2m9n3p1</span></div>
+        <div class="h-comment">  → Identifies the logged-in session. Steal this = account takeover!</div>
+        <br>
+        <div><span class="h-key">auth_token</span> = <span class="h-val">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.demo</span></div>
+        <div class="h-comment">  → JWT token. Decode at jwt.io to see payload claims.</div>
+        <br>
+        <div><span class="h-key">user_email</span> = <span class="h-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="295d4c5a5d5c5a4c5b69484448534047074047">[email&#160;protected]</a></span></div>
+        <div class="h-comment">  → PII exposed in cookie over HTTP!</div>
+        <br>
+        <div><span class="h-key">user_pref</span> = <span class="h-val">lang=en-IN</span></div>
+        <div class="h-comment">  → Preference tracking cookie</div>
+        <br>
+        <div><span class="h-key">cart_count</span> = <span class="h-val">2</span></div>
+        <div class="h-comment">  → Cart state stored in cookie (not HttpOnly!)</div>
+        <br>
+        <div class="h-comment">// Wireshark filter to extract cookies:</div>
+        <div><span class="h-val">http.cookie</span></div>
+      </div>
+    </div>
+
+    <!-- FILTERS TAB -->
+    <div class="tab-content" id="tab-filters">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="filter-box">
+          <div class="filter-title">All HTTP traffic</div>
+          <div class="filter-val">http</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Only POST requests</div>
+          <div class="filter-val">http.request.method == "POST"</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Only GET requests</div>
+          <div class="filter-val">http.request.method == "GET"</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Packets with cookies</div>
+          <div class="filter-val">http.cookie</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Traffic to/from server</div>
+          <div class="filter-val">ip.addr == 127.0.0.1 && http</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Specific port (8080)</div>
+          <div class="filter-val">tcp.port == 8080</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Search body content</div>
+          <div class="filter-val">http contains "password"</div>
+        </div>
+        <div class="filter-box">
+          <div class="filter-title">Follow TCP stream</div>
+          <div class="filter-val">Right-click → Follow → TCP Stream</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2024 Amazin.in — Educational demo only. Not affiliated with Amazon.</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function removeItem(btn) {
+    btn.closest('.cart-item').style.opacity = '0.4';
+    fetch('/api/cart/remove?item=item1&session=' + (document.cookie.match(/session_id=([^;]+)/)||[])[1])
+      .catch(()=>{});
+  }
+
+  function placeOrder() {
+    const cookies = document.cookie;
+    fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'user_id=42&name=Demo+User&email=testuser%40amazin.in&address=12+MG+Road%2C+Bengaluru+560001&card_last4=4242&items=Smartwatch%2CEarbuds&total=3798&csrf_token=abc123demo'
+    }).catch(()=>{});
+
+    alert('🛒 Order placed!\n\n🦈 Wireshark: Check the POST to /api/checkout\nYou will see name, email, 
